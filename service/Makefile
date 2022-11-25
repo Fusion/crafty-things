@@ -5,7 +5,7 @@ build:
 
 install:
 	@install bin/craftythingshelper /usr/local/bin/ && \
-		sudo launchctl bootstrap gui/${SELF} ./com.voilaweb.fusion.craftythings.plist
+		launchctl bootstrap gui/${SELF} ./com.voilaweb.fusion.craftythings.plist
 
 uninstall:
 	@launchctl bootout gui/${SELF} ./com.voilaweb.fusion.craftythings.plist
