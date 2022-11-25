@@ -1,3 +1,8 @@
+/*
+ * I lifted this file from https://github.com/FlohGro-dev/Craftist
+ * and added a minor couple functions. All credits go to FlohGro!
+ */
+
 import { AfterBlockLocation, CraftBlock, CraftTextBlock, CraftTextBlockInsert, CraftTextRun } from "@craftdocs/craft-extension-api";
 
 export async function getAllTodoItemsFromCurrentPage() {
