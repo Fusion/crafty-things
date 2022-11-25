@@ -1,0 +1,10 @@
+{
+  "id": "do.craft.fusion.things",
+  "name": "Crafty Things",
+  "fileName": "things-extension",
+  "author" : "Fusion",
+  "author-email" : "chris@voilaweb.com",
+  "description" : "Very basic Things3 integratopm for Craft",
+  "api": "0.0.4",
+  "main": "index.html"
+}
