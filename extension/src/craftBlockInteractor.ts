@@ -5,6 +5,14 @@
 
 import { AfterBlockLocation, CraftBlock, CraftTextBlock, CraftTextBlockInsert, CraftTextRun } from "@craftdocs/craft-extension-api";
 
+export async function getPageTitle() {
+  const getPageResult = await craft.dataApi.getCurrentPage();
+  if (getPageResult.status !== "success") {
+    throw new Error(getPageResult.message)
+  }
+  return getPageResult.data.content.map((c) => c.text).join("")
+}
+
 export async function getAllTodoItemsFromCurrentPage() {
   let todoBlocks: CraftTextBlock[] = [];
 
@@ -48,6 +56,37 @@ export async function getUncheckedTodoItemsFromCurrentPage() {
 
   return todoBlocks;
 }
+
+// Return selected blocks. If no todo block is selected, return all the blocks.
+export async function getUncheckedTodoItemsFromCurrentSelectionOrPage() {
+  let todoBlocks: CraftTextBlock[] = [];
+
+  const getPageResult = await craft.editorApi.getSelection();
+
+  if (getPageResult.status !== "success") {
+    throw new Error(getPageResult.message)
+  }
+
+  const subblocks = getPageResult.data
+  let foundTodos = 0
+  subblocks.forEach(function (subBlock) {
+    if (subBlock.listStyle.type == "todo") {
+      foundTodos += 1
+      if (subBlock.listStyle.state == "unchecked") {
+        if (subBlock.type == "textBlock") {
+          todoBlocks.push(subBlock);
+        }
+      }
+    }
+  })
+
+  if (foundTodos == 0) {
+    return getUncheckedTodoItemsFromCurrentPage()
+  }
+
+  return todoBlocks;
+}
+
 
 export async function getCheckedTodoItemsFromCurrentPage() {
   let todoBlocks: CraftTextBlock[] = [];
@@ -109,10 +148,10 @@ export function getMarkdownContentWithLinkToCraftTextBlock(block: CraftBlock) {
 }
 
 
-export function getAddTaskForm(block: CraftBlock) {
+export function getAddTaskForm(pageTitle: string, block: CraftBlock) {
   const blocks: CraftBlock[] = [block];
   let mdTitle = craft.markdown.craftBlockToMarkdown(blocks, "common", { tableSupported: false }).replace("- [ ]", "")
-  let mdContent = "craftdocs://open?blockId=" + block.id + "&spaceId=" + block.spaceId
+  let mdContent = "["+pageTitle+"](craftdocs://open?blockId=" + block.id + "&spaceId=" + block.spaceId+")"
   return {
     title: mdTitle,
     content: mdContent

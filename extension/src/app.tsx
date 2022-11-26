@@ -38,7 +38,10 @@ function useCraftDarkMode() {
 }
 
 function insertActionButton() {
-  let openTasks = CraftBlockInteractor.getUncheckedTodoItemsFromCurrentPage();
+  let pageTitle = '-default-'
+  CraftBlockInteractor.getPageTitle().then((str) => {
+    pageTitle = str
+  let openTasks = CraftBlockInteractor.getUncheckedTodoItemsFromCurrentSelectionOrPage();
   openTasks.then((blocks) => {
     return Promise.all(
       blocks
@@ -47,7 +50,7 @@ function insertActionButton() {
         )
         .map((block) => {
 
-          const taskForm = CraftBlockInteractor.getAddTaskForm(block);
+          const taskForm = CraftBlockInteractor.getAddTaskForm(pageTitle, block);
           if (taskForm.title.includes("⤴")) return // Already tagged
           /* Debugging
           const outBlock = craft.blockFactory.textBlock({
@@ -80,6 +83,7 @@ function insertActionButton() {
         })
     )
   });
+})
 }
 
 export function initApp() {
