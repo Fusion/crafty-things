@@ -185,7 +185,7 @@ func main() {
 	log = zerolog.New(
 		zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC1123Z}).Level(
 		zerolog.InfoLevel).With().Timestamp().Logger()
-	log.Info().Str("Version", "0.0.1").Str("Author", "Chris F Ravenscroft").Msg("Crafty Things Craft-to-Things Helper.")
+	log.Info().Str("Version", "0.0.2").Str("Author", "Chris F Ravenscroft").Msg("Crafty Things Craft-to-Things Helper.")
 
 	if selfInstall() {
 		return
