@@ -5,8 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/kardianos/service"
-	"github.com/rs/zerolog"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -15,6 +13,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/kardianos/service"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -132,6 +133,8 @@ func selfInstall() (exit bool) {
 	}
 	if len(buf.Bytes()) > 0 {
 		log.Error().Msg("I am already running, likely as a service. Bailing.")
+		runCmd("/usr/bin/osascript",
+			"-e", "display alert \"Crafty Things Helper is already running, likely as a service. Bailing.\"")
 		return true
 	}
 
@@ -151,6 +154,8 @@ func selfInstall() (exit bool) {
 		return false
 	}
 	log.Info().Msg("Installing myself as a service.")
+	runCmd("/usr/bin/osascript",
+		"-e", "display alert \"Installing Crafty Things Helper as a service.\"")
 
 	// Install executable
 	exePath, err := os.Executable()
