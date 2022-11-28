@@ -31,7 +31,7 @@ var (
             <string>com.voilaweb.fusion.CraftyThings</string>
             <key>ProgramArguments</key>
             <array>
-              <string>/usr/local/bin/craftythingshelper</string>
+              <string>/Applications/craftythingshelper.app/Contents/MacOS/craftythingshelper</string>
             </array>
             <key>RunAtLoad</key>
             <true/>
@@ -153,9 +153,6 @@ func selfInstall() (exit bool) {
 	if len(buf.Bytes()) > 0 {
 		return false
 	}
-	log.Info().Msg("Installing myself as a service.")
-	runCmd("/usr/bin/osascript",
-		"-e", "display alert \"Installing Crafty Things Helper as a service.\"")
 
 	// Install executable
 	exePath, err := os.Executable()
@@ -163,10 +160,15 @@ func selfInstall() (exit bool) {
 		log.Error().Err(err).Msg("Unable to find location of executable.")
 		return true
 	}
-	buf = runCmd("/usr/bin/install", exePath, "/usr/local/bin/craftythingshelper")
-	if buf == nil {
+	if exePath != "/Applications/craftythingshelper.app/Contents/MacOS/craftythingshelper" {
+		log.Error().Err(err).Msg("Running executable from wrong location.")
+		runCmd("/usr/bin/osascript",
+			"-e", "display alert \"Please move helper to Applications before running.\"")
 		return true
 	}
+	log.Info().Msg("Installing myself as a service.")
+	runCmd("/usr/bin/osascript",
+		"-e", "display alert \"Installing Crafty Things Helper as a service.\"")
 
 	err = ioutil.WriteFile("/tmp/com.voilaweb.fusion.craftythings.plist", []byte(plist), 0600)
 	if err != nil {
@@ -185,7 +187,7 @@ func main() {
 	log = zerolog.New(
 		zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC1123Z}).Level(
 		zerolog.InfoLevel).With().Timestamp().Logger()
-	log.Info().Str("Version", "0.0.2").Str("Author", "Chris F Ravenscroft").Msg("Crafty Things Craft-to-Things Helper.")
+	log.Info().Str("Version", "0.0.3").Str("Author", "Chris F Ravenscroft").Msg("Crafty Things Craft-to-Things Helper.")
 
 	if selfInstall() {
 		return
